@@ -1,5 +1,8 @@
+import 'package:carros/pages/api_response.dart';
 import 'package:carros/pages/home/home_page.dart';
 import 'package:carros/pages/login/login_api.dart';
+import 'package:carros/pages/login/usuario.dart';
+import 'package:carros/utils/alert.dart';
 import 'package:carros/utils/nav.dart';
 import 'package:carros/widgets/app_button.dart';
 import 'package:carros/widgets/app_text.dart';
@@ -18,6 +21,13 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   final _focusSenha = FocusNode();
+
+  bool _showProgress = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
             AppButton(
               "Login",
               onPressed: _onClickLogin,
+              showprogress: _showProgress,
             ),
           ],
         ),
@@ -76,14 +87,24 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
+    setState(() {
+      _showProgress = true;
+    });
+
     String login = _tLogin.text;
     String senha = _tSenha.text;
 
-    bool ok = await LoginApi.login(login, senha);
+    ApiResponse response = await LoginApi.login(login, senha);
+    if(response.ok) {
 
-    if(ok) {
-      push(context, HomePage());
+      Usuario user = response.result;
+      push(context, HomePage(), replace: true);
+    } else {
+      alert(context, response.msg);
     }
+    setState(() {
+      _showProgress = false;
+    });
 
   }
 
