@@ -1,5 +1,5 @@
 import 'package:carros/pages/api_response.dart';
-import 'package:carros/pages/home/home_page.dart';
+import 'file:///C:/Users/Adriano/AndroidStudioProjects/carros/lib/pages/carro/home_page.dart';
 import 'package:carros/pages/login/login_api.dart';
 import 'package:carros/pages/login/usuario.dart';
 import 'package:carros/utils/alert.dart';
