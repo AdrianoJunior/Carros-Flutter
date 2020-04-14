@@ -1,5 +1,5 @@
 import 'package:carros/pages/api_response.dart';
-import 'file:///C:/Users/Adriano/AndroidStudioProjects/carros/lib/pages/carro/home_page.dart';
+import 'package:carros/pages/carro/home_page.dart';
 import 'package:carros/pages/login/login_api.dart';
 import 'package:carros/pages/login/usuario.dart';
 import 'package:carros/utils/alert.dart';
@@ -27,6 +27,13 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+
+    Future<Usuario> future = Usuario.get();
+    future.then((user) {
+      if (user != null) {
+        push(context, HomePage(), replace: true);
+      }
+    });
   }
 
   @override
@@ -82,7 +89,6 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   _onClickLogin() async {
-
     if (!_formKey.currentState.validate()) {
       return;
     }
@@ -95,17 +101,16 @@ class _LoginPageState extends State<LoginPage> {
     String senha = _tSenha.text;
 
     ApiResponse response = await LoginApi.login(login, senha);
-    if(response.ok) {
+    if (response.ok) {
 
-      Usuario user = response.result;
       push(context, HomePage(), replace: true);
+
     } else {
       alert(context, response.msg);
     }
     setState(() {
       _showProgress = false;
     });
-
   }
 
   String _validateLogin(text) {

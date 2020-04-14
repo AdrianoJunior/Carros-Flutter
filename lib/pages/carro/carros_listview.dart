@@ -39,7 +39,7 @@ class _CarrosListViewState extends State<CarrosListView> with AutomaticKeepAlive
               "Não foi possivel buscar os carros",
               style: TextStyle(
                 color: Colors.red,
-                fontSize: 25,
+                fontSize: 22,
               ),
             ),
           );

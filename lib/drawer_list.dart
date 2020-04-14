@@ -4,20 +4,32 @@ import 'package:carros/utils/nav.dart';
 import 'package:flutter/material.dart';
 
 class DrawerList extends StatelessWidget {
+  UserAccountsDrawerHeader _header(Usuario user) {
+    return UserAccountsDrawerHeader(
+      accountName: Text(user.nome),
+      accountEmail: Text(user.email),
+      currentAccountPicture: CircleAvatar(
+        backgroundImage: NetworkImage(user.urlFoto),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    Future<Usuario> future = Usuario.get();
 
-    final urlFoto = "https://cdn.iconscout.com/icon/free/png-256/avatar-372-456324.png";
     return SafeArea(
       child: Drawer(
         child: ListView(
           children: <Widget>[
-            UserAccountsDrawerHeader(accountName: Text("Adriano Junior"),
-                accountEmail: Text("adriano.santoscoutinhojr@gmail.com"),
-            currentAccountPicture: CircleAvatar(
-              backgroundImage: NetworkImage(urlFoto),
-            ),),
+            FutureBuilder<Usuario>(
+                future: future,
+                builder: (context, snapshot) {
+                  Usuario user = snapshot.data;
+
+                  return user != null ? _header(user) : Container();
+
+                }),
             ListTile(
               leading: Icon(Icons.star),
               title: Text("Favoritos"),
@@ -51,9 +63,8 @@ class DrawerList extends StatelessWidget {
   }
 
   _onClickLogout(BuildContext context) {
+    Usuario.clear();
     Navigator.pop(context);
     push(context, LoginPage(), replace: true);
   }
-
-
 }
