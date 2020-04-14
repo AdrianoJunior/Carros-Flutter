@@ -1,110 +1,45 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carros/drawer_list.dart';
-import 'package:carros/pages/carro/carro.dart';
-import 'package:carros/pages/carro/carros_api.dart';
+import 'package:carros/pages/carro/carros_listview.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+import 'carros_api.dart';
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Carros"),
-      ),
-      drawer: DrawerList(),
-      body: _body(),
-    );
-  }
-
-  _body() {
-    Future<List<Carro>> carros = CarrosApi.getCarros();
-
-    return FutureBuilder(
-      future: carros,
-      builder: (context, snapshot) {
-        List<Carro> carros = snapshot.data;
-
-        if (snapshot.hasError) {
-          return Center(
-            child: Text(
-              "Não foi possivel buscar os carros",
-              style: TextStyle(
-                color: Colors.red,
-                fontSize: 25,
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Carros"),
+          bottom: TabBar(
+            tabs: [
+              Tab(
+                text: "Classicos",
+                icon: Icon(Icons.directions_car),
               ),
-            ),
-          );
-        } else if (snapshot.hasData) {
-          return _listView(carros);
-        } else {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      },
-    );
-  }
-
-  Container _listView(List<Carro> carros) {
-    return Container(
-      padding: EdgeInsets.all(16),
-      child: ListView.builder(
-        itemCount: carros != null ? carros.length : 0,
-        itemBuilder: (context, index) {
-          Carro c = carros[index];
-
-          return Card(
-            color: Colors.grey[100],
-            child: Container(
-              padding: EdgeInsets.all(10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Center(
-                    child: CachedNetworkImage(
-                      imageUrl: c.urlFoto ??
-                          "http://www.livroandroid.com.br/livro/carros/esportivos/BMW.png",
-                      width: 150,
-                    ),
-                  ),
-                  Text(
-                    c.nome ?? "Nome do carro",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 25,
-                    ),
-                  ),
-                  Text(
-                    "Descrição...",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                  ButtonBarTheme(
-                    data: ButtonBarTheme.of(context),
-                    child: ButtonBar(
-                      children: <Widget>[
-                        FlatButton(
-                          child: const Text('DETALHES'),
-                          onPressed: () {
-                            /* ... */
-                          },
-                        ),
-                        FlatButton(
-                          child: const Text('SHARE'),
-                          onPressed: () {
-                            /* ... */
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              Tab(
+                text: "Esportivos",
+                icon: Icon(Icons.directions_car),
               ),
-            ),
-          );
-        },
+              Tab(
+                text: "Luxo",
+                icon: Icon(Icons.directions_car),
+              ),
+            ],
+          ),
+        ),
+        drawer: DrawerList(),
+        body: TabBarView(children: [
+          CarrosListView(TipoCarro.classicos),
+          CarrosListView(TipoCarro.esportivos),
+          CarrosListView(TipoCarro.luxo),
+        ]),
       ),
     );
   }
