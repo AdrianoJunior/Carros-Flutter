@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:carros/pages/api_response.dart';
 import 'package:carros/pages/carro/home_page.dart';
 import 'package:carros/pages/login/login_api.dart';
@@ -22,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
 
   final _focusSenha = FocusNode();
 
-  bool _showProgress = false;
+  final _streamController = StreamController<bool>();
 
   @override
   void initState() {
@@ -77,10 +79,16 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(
               height: 20,
             ),
-            AppButton(
-              "Login",
-              onPressed: _onClickLogin,
-              showprogress: _showProgress,
+            StreamBuilder<bool>(
+              stream: _streamController.stream,
+              initialData: false,
+              builder: (context, snapshot) {
+                return AppButton(
+                  "Login",
+                  onPressed: _onClickLogin,
+                  showprogress: snapshot.data,
+                );
+              }
             ),
           ],
         ),
@@ -93,13 +101,10 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    setState(() {
-      _showProgress = true;
-    });
-
     String login = _tLogin.text;
     String senha = _tSenha.text;
 
+    _streamController.add(true);
     ApiResponse response = await LoginApi.login(login, senha);
     if (response.ok) {
 
@@ -108,9 +113,8 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       alert(context, response.msg);
     }
-    setState(() {
-      _showProgress = false;
-    });
+
+    _streamController.add(false);
   }
 
   String _validateLogin(text) {
@@ -128,5 +132,12 @@ class _LoginPageState extends State<LoginPage> {
       return "A senha precisa ter pelo menos 3 números";
     }
     return null;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _streamController.close();
   }
 }
