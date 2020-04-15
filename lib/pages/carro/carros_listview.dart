@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carros/pages/carro/carro_page.dart';
+import 'package:carros/pages/carro/carros_bloc.dart';
 import 'package:carros/utils/nav.dart';
+import 'package:carros/widgets/text_error.dart';
 import 'package:flutter/material.dart';
 
 import 'carro.dart';
@@ -9,7 +11,6 @@ import 'carros_api.dart';
 import 'dart:async';
 
 class CarrosListView extends StatefulWidget {
-
   String tipo;
 
   CarrosListView(this.tipo);
@@ -18,11 +19,11 @@ class CarrosListView extends StatefulWidget {
   _CarrosListViewState createState() => _CarrosListViewState();
 }
 
-class _CarrosListViewState extends State<CarrosListView> with AutomaticKeepAliveClientMixin<CarrosListView> {
-
+class _CarrosListViewState extends State<CarrosListView>
+    with AutomaticKeepAliveClientMixin<CarrosListView> {
   List<Carro> carros;
 
-  final _streamController = StreamController<List<Carro>>();
+  final _bloc = CarrosBloc();
 
   @override
   bool get wantKeepAlive => true;
@@ -31,37 +32,27 @@ class _CarrosListViewState extends State<CarrosListView> with AutomaticKeepAlive
   void initState() {
     super.initState();
 
-    _loadCarros();
-  }
-
-  _loadCarros() async {
-
-    List<Carro> carros = await CarrosApi.getCarros(widget.tipo);
-
-    _streamController.add(carros);
-
+    _bloc.fetch(widget.tipo);
   }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
 
-    return StreamBuilder(stream: _streamController.stream,
+    return StreamBuilder(
+        stream: _bloc.stream,
         builder: (context, snapshot) {
-      if(snapshot.hasError) {
-        return Center(
-          child: Text("Não foi possível buscar os carros.", style: TextStyle(
-            color: Colors.red,
-            fontSize: 25,
-          ),),
-        );
-      } else if(!snapshot.hasData) {
-        return Center(child: CircularProgressIndicator(),);
-      }
+          if (snapshot.hasError) {
+            return TextError("Não foi possivel buscar os carros");
+          } else if (!snapshot.hasData) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-      List<Carro> carros = snapshot.data;
-      return _listView(carros);
-    });
+          List<Carro> carros = snapshot.data;
+          return _listView(carros);
+        });
   }
 
   Container _listView(List<Carro> carros) {
@@ -105,9 +96,8 @@ class _CarrosListViewState extends State<CarrosListView> with AutomaticKeepAlive
                     child: ButtonBar(
                       children: <Widget>[
                         FlatButton(
-                          child: const Text('DETALHES'),
-                          onPressed: () => _onClickCarro(c)
-                        ),
+                            child: const Text('DETALHES'),
+                            onPressed: () => _onClickCarro(c)),
                         FlatButton(
                           child: const Text('SHARE'),
                           onPressed: () {
@@ -130,10 +120,10 @@ class _CarrosListViewState extends State<CarrosListView> with AutomaticKeepAlive
     push(context, CarroPage(c));
   }
 
-@override
+  @override
   void dispose() {
     super.dispose();
 
-    _streamController.close();
+    _bloc.dispose();
   }
 }

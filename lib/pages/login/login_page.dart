@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:carros/pages/api_response.dart';
 import 'package:carros/pages/carro/home_page.dart';
 import 'package:carros/pages/login/login_api.dart';
+import 'package:carros/pages/login/login_bloc.dart';
 import 'package:carros/pages/login/usuario.dart';
 import 'package:carros/utils/alert.dart';
 import 'package:carros/utils/nav.dart';
@@ -24,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
 
   final _focusSenha = FocusNode();
 
-  final _streamController = StreamController<bool>();
+  final _bloc = LoginBloc();
 
   @override
   void initState() {
@@ -80,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
               height: 20,
             ),
             StreamBuilder<bool>(
-              stream: _streamController.stream,
+              stream: _bloc.stream,
               initialData: false,
               builder: (context, snapshot) {
                 return AppButton(
@@ -104,8 +105,7 @@ class _LoginPageState extends State<LoginPage> {
     String login = _tLogin.text;
     String senha = _tSenha.text;
 
-    _streamController.add(true);
-    ApiResponse response = await LoginApi.login(login, senha);
+    ApiResponse response = await _bloc.login(login, senha);
     if (response.ok) {
 
       push(context, HomePage(), replace: true);
@@ -113,8 +113,6 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       alert(context, response.msg);
     }
-
-    _streamController.add(false);
   }
 
   String _validateLogin(text) {
@@ -138,6 +136,6 @@ class _LoginPageState extends State<LoginPage> {
   void dispose() {
     super.dispose();
 
-    _streamController.close();
+    _bloc.dispose();
   }
 }
