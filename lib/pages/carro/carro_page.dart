@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carros/pages/carro/loripsum_api.dart';
 import 'package:carros/widgets/text.dart';
+import 'package:carros/widgets/text_error.dart';
 import 'package:flutter/material.dart';
 
 import 'carro.dart';
 
 class CarroPage extends StatefulWidget {
   Carro carro;
-
 
   CarroPage(this.carro);
 
@@ -23,7 +23,6 @@ class _CarroPageState extends State<CarroPage> {
     super.initState();
 
     _loripsumApiBloc.fetch();
-
   }
 
   @override
@@ -153,11 +152,15 @@ class _CarroPageState extends State<CarroPage> {
                 return Center(
                   child: CircularProgressIndicator(),
                 );
+              } else if (snapshot.hasError) {
+                return TextError("Não foi possível acessar a api");
               }
 
-              return text(
+              return Text(
                 snapshot.data,
-                fontSize: 16,
+                style: TextStyle(
+                  fontSize: 16,
+                ),
               );
             }),
       ],

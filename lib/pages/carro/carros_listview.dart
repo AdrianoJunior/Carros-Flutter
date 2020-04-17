@@ -10,52 +10,14 @@ import 'carros_api.dart';
 
 import 'dart:async';
 
-class CarrosListView extends StatefulWidget {
-  String tipo;
-
-  CarrosListView(this.tipo);
-
-  @override
-  _CarrosListViewState createState() => _CarrosListViewState();
-}
-
-class _CarrosListViewState extends State<CarrosListView>
-    with AutomaticKeepAliveClientMixin<CarrosListView> {
+class CarrosListView extends StatelessWidget {
   List<Carro> carros;
 
-  final _bloc = CarrosBloc();
-
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _bloc.fetch(widget.tipo);
-  }
+  CarrosListView(this.carros);
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
 
-    return StreamBuilder(
-        stream: _bloc.stream,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return TextError("Não foi possivel buscar os carros");
-          } else if (!snapshot.hasData) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-
-          List<Carro> carros = snapshot.data;
-          return _listView(carros);
-        });
-  }
-
-  Container _listView(List<Carro> carros) {
     return Container(
       padding: EdgeInsets.all(16),
       child: ListView.builder(
@@ -97,7 +59,7 @@ class _CarrosListViewState extends State<CarrosListView>
                       children: <Widget>[
                         FlatButton(
                             child: const Text('DETALHES'),
-                            onPressed: () => _onClickCarro(c)),
+                            onPressed: () => _onClickCarro(context, c)),
                         FlatButton(
                           child: const Text('SHARE'),
                           onPressed: () {
@@ -116,14 +78,7 @@ class _CarrosListViewState extends State<CarrosListView>
     );
   }
 
-  _onClickCarro(Carro c) {
+  _onClickCarro(context, Carro c) {
     push(context, CarroPage(c));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-
-    _bloc.dispose();
   }
 }
