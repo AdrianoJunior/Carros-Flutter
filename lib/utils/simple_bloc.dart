@@ -8,7 +8,6 @@ class SimpleBloc<T> {
   Stream<T> get stream => _controller.stream;
 
   add(T object) {
-
     _controller.add(object);
   }
 
