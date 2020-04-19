@@ -3,6 +3,7 @@ import 'package:carros/pages/carro/carro_form_page.dart';
 import 'package:carros/pages/carro/carros_api.dart';
 import 'package:carros/pages/carro/loripsum_api.dart';
 import 'package:carros/pages/favoritos/favorito_service.dart';
+import 'package:carros/pages/video_page.dart';
 import 'package:carros/utils/alert.dart';
 import 'package:carros/utils/event_bus.dart';
 import 'package:carros/utils/nav.dart';
@@ -53,7 +54,9 @@ class _CarroPageState extends State<CarroPage> {
         title: Text(widget.carro.nome),
         actions: <Widget>[
           IconButton(icon: Icon(Icons.place), onPressed: _onClickMapa),
-          IconButton(icon: Icon(Icons.videocam), onPressed: _onClickVideo),
+          IconButton(
+              icon: Icon(Icons.videocam),
+              onPressed: () => _onClickVideo(context)),
           PopupMenuButton(
               onSelected: (String value) => _onClickPopupMenu(value),
               itemBuilder: (context) {
@@ -135,7 +138,13 @@ class _CarroPageState extends State<CarroPage> {
 
   void _onClickMapa() {}
 
-  void _onClickVideo() {}
+  void _onClickVideo(BuildContext context) {
+    if (carro.urlVideo != null && carro.urlVideo.isNotEmpty) {
+      push(context, VideoPage(carro));
+    } else {
+      alert(context, "Este carro não possui nenhum vídeo");
+    }
+  }
 
   _onClickPopupMenu(String value) {
     switch (value) {
@@ -208,8 +217,8 @@ class _CarroPageState extends State<CarroPage> {
 
     if (response.ok) {
       alert(context, "Carro deletado com sucesso", callback: () {
-
-        EventBus.get(context).sendEvent(CarroEvent("carro_deletado", carro.tipo));
+        EventBus.get(context)
+            .sendEvent(CarroEvent("carro_deletado", carro.tipo));
         pop(context);
       });
     } else {
