@@ -1,13 +1,13 @@
 import 'dart:async';
-
-import 'package:carros/pages/favoritos/db_helper.dart';
-import 'package:carros/pages/favoritos/entity.dart';
 import 'package:sqflite/sqflite.dart';
+
+import 'db_helper.dart';
+import 'entity.dart';
 
 // Data Access Object
 abstract class BaseDAO<T extends Entity> {
-
   String get tableName;
+
   T fromJson(Map<String, dynamic> map);
 
   Future<Database> get db => DatabaseHelper.getInstance().db;
@@ -20,21 +20,23 @@ abstract class BaseDAO<T extends Entity> {
     return id;
   }
 
-  Future<List<T>> findAll() async {
+  Future<List<T>> query(String sql, [List<dynamic> arguments]) async {
     final dbClient = await db;
 
-    final list = await dbClient.rawQuery('select * from $tableName');
+    final list = await dbClient.rawQuery(sql, arguments);
 
     return list.map<T>((json) => fromJson(json)).toList();
   }
 
+  Future<List<T>> findAll() {
+    return query('select * from $tableName');
+  }
+
   Future<T> findById(int id) async {
-    var dbClient = await db;
-    final list =
-        await dbClient.rawQuery('select * from $tableName where id = ?', [id]);
+    final list = await query('select * from $tableName where id = ?', [id]);
 
     if (list.length > 0) {
-      return fromJson(list.first);
+      return list.first;
     }
 
     return null;
@@ -54,7 +56,8 @@ abstract class BaseDAO<T extends Entity> {
 
   Future<int> delete(int id) async {
     var dbClient = await db;
-    return await dbClient.rawDelete('delete from $tableName where id = ?', [id]);
+    return await dbClient
+        .rawDelete('delete from $tableName where id = ?', [id]);
   }
 
   Future<int> deleteAll() async {

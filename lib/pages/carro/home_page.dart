@@ -1,6 +1,6 @@
 import 'package:carros/drawer_list.dart';
-import 'package:carros/pages/carro/carros_listview.dart';
 import 'package:carros/pages/carro/carros_page.dart';
+import 'package:carros/pages/favoritos/favoritos_page.dart';
 import 'package:carros/utils/prefs.dart';
 import 'package:flutter/material.dart';
 
@@ -23,13 +23,12 @@ class _HomePageState extends State<HomePage>
   }
 
   _initTabs() async {
-
     // Primeiro busca o índice nas prefs.
     int tabIdx = await Prefs.getInt("tabIdx");
 
     // Depois cria o TabController
     // No método build na primeira vez ele poderá estar nulo
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
 
     // Agora que temos o TabController e o índice da tab,
     // chama o setState para redesenhar a tela
@@ -50,32 +49,40 @@ class _HomePageState extends State<HomePage>
         bottom: _tabController == null
             ? null
             : TabBar(
-          controller: _tabController,
-          tabs: [
-            Tab(
-              text: "Clássicos",
-            ),
-            Tab(
-              text: "Esportivos",
-            ),
-            Tab(
-              text: "Luxo",
-            )
-          ],
-        ),
+                controller: _tabController,
+                tabs: [
+                  Tab(
+                    text: "Clássicos",
+                    icon: Icon(Icons.directions_car),
+                  ),
+                  Tab(
+                    text: "Esportivos",
+                    icon: Icon(Icons.directions_car),
+                  ),
+                  Tab(
+                    text: "Luxo",
+                    icon: Icon(Icons.directions_car),
+                  ),
+                  Tab(
+                    text: "Favoritos",
+                    icon: Icon(Icons.favorite),
+                  )
+                ],
+              ),
       ),
       body: _tabController == null
           ? Center(
-        child: CircularProgressIndicator(),
-      )
+              child: CircularProgressIndicator(),
+            )
           : TabBarView(
-        controller: _tabController,
-        children: [
-          CarrosPage(TipoCarro.classicos),
-          CarrosPage(TipoCarro.esportivos),
-          CarrosPage(TipoCarro.luxo),
-        ],
-      ),
+              controller: _tabController,
+              children: [
+                CarrosPage(TipoCarro.classicos),
+                CarrosPage(TipoCarro.esportivos),
+                CarrosPage(TipoCarro.luxo),
+                FavoritosPage(),
+              ],
+            ),
       drawer: DrawerList(),
     );
   }

@@ -1,11 +1,10 @@
 import 'dart:convert' as convert;
 
 import 'package:carros/pages/carro/carro.dart';
-import 'package:carros/pages/favoritos/carro_dao.dart';
+import 'file:///C:/Users/Adriano/AndroidStudioProjects/carros/lib/pages/carro/carro_dao.dart';
 import 'package:carros/pages/login/usuario.dart';
 
 import 'package:http/http.dart' as http;
-
 
 class TipoCarro {
   static final String classicos = "classicos";
@@ -15,12 +14,14 @@ class TipoCarro {
 
 class CarrosApi {
   static Future<List<Carro>> getCarros(String tipo) async {
-
     Usuario user = await Usuario.get();
-    Map<String, String> headers = {"Content-Type": "application/json",
-    "Authorization" : "Bearer ${user.token}"};
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer ${user.token}"
+    };
 
-    var url = 'https://carros-springboot.herokuapp.com/api/v2/carros/tipo/$tipo';
+    var url =
+        'https://carros-springboot.herokuapp.com/api/v2/carros/tipo/$tipo';
 
     var response = await http.get(url, headers: headers);
 
@@ -28,13 +29,8 @@ class CarrosApi {
 
     List list = convert.json.decode(json);
 
-    final carros = list.map<Carro>((map) => Carro.fromJson(map)).toList();
-
-    final dao = CarroDAO();
-
-      carros.forEach(dao.save);
+    final carros = list.map<Carro>((map) => Carro.fromMap(map)).toList();
 
     return carros;
-
   }
 }

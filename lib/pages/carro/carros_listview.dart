@@ -17,7 +17,6 @@ class CarrosListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       padding: EdgeInsets.all(16),
       child: ListView.builder(
@@ -48,7 +47,7 @@ class CarrosListView extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "Descrição...",
+                    c.descricao,
                     style: TextStyle(
                       fontSize: 16,
                     ),

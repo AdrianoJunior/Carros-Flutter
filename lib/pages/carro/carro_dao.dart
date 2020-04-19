@@ -1,10 +1,6 @@
-import 'dart:async';
+import 'package:carros/utils/sql/base_dao.dart';
 
-import 'package:carros/pages/carro/carro.dart';
-import 'package:carros/pages/favoritos/db_helper.dart';
-import 'package:sqflite/sqflite.dart';
-
-import 'base_dao.dart';
+import 'carro.dart';
 
 // Data Access Object
 class CarroDAO extends BaseDAO<Carro> {
@@ -13,14 +9,14 @@ class CarroDAO extends BaseDAO<Carro> {
 
   @override
   Carro fromJson(Map<String, dynamic> map) {
-    return Carro.fromJson(map);
+    return Carro.fromMap(map);
   }
 
   Future<List<Carro>> findAllByTipo(String tipo) async {
     final dbClient = await db;
 
     final list =
-    await dbClient.rawQuery('select * from carro where tipo =? ', [tipo]);
+        await dbClient.rawQuery('select * from carro where tipo =? ', [tipo]);
 
     return list.map<Carro>((json) => fromJson(json)).toList();
   }

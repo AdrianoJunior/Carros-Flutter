@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carros/pages/carro/loripsum_api.dart';
+import 'package:carros/pages/favoritos/favorito_service.dart';
 import 'package:carros/widgets/text.dart';
 import 'package:carros/widgets/text_error.dart';
 import 'package:flutter/material.dart';
@@ -18,11 +19,25 @@ class CarroPage extends StatefulWidget {
 class _CarroPageState extends State<CarroPage> {
   final _loripsumApiBloc = LoripsumBloc();
 
+  IconData icon = Icons.favorite_border;
+  Color color = Colors.grey;
+
+  bool favorito = false;
+
+  Carro get carro => widget.carro;
+
   @override
   void initState() {
     super.initState();
 
     _loripsumApiBloc.fetch();
+
+    FavoritoService.isFavorito(carro).then((favorito) {
+      setState(() {
+        color = favorito ? Colors.red : Colors.grey;
+        icon = favorito ? Icons.favorite : Icons.favorite_border;
+      });
+    });
   }
 
   @override
@@ -93,8 +108,8 @@ class _CarroPageState extends State<CarroPage> {
           children: <Widget>[
             IconButton(
                 icon: Icon(
-                  Icons.favorite,
-                  color: Colors.red,
+                  icon,
+                  color: color,
                   size: 40,
                 ),
                 onPressed: _onClickFavorito),
@@ -130,7 +145,15 @@ class _CarroPageState extends State<CarroPage> {
     }
   }
 
-  void _onClickFavorito() {}
+  void _onClickFavorito() async {
+    bool favorito = await FavoritoService.favoritar(carro);
+
+    setState(() {
+      color = favorito ? Colors.red : Colors.grey;
+      icon = favorito ? Icons.favorite : Icons.favorite_border;
+    });
+
+  }
 
   void _onClickShare() {}
 
@@ -141,7 +164,7 @@ class _CarroPageState extends State<CarroPage> {
         SizedBox(
           height: 20,
         ),
-        text(widget.carro.desc, fontSize: 16, bold: true),
+        text(widget.carro.descricao, fontSize: 16, bold: true),
         SizedBox(
           height: 20,
         ),
