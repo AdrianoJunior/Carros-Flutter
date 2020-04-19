@@ -1,10 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carros/pages/carro/carro_form_page.dart';
+import 'package:carros/pages/carro/carros_api.dart';
 import 'package:carros/pages/carro/loripsum_api.dart';
 import 'package:carros/pages/favoritos/favorito_service.dart';
+import 'package:carros/utils/alert.dart';
+import 'package:carros/utils/nav.dart';
 import 'package:carros/widgets/text.dart';
 import 'package:carros/widgets/text_error.dart';
 import 'package:flutter/material.dart';
 
+import '../api_response.dart';
 import 'carro.dart';
 
 class CarroPage extends StatefulWidget {
@@ -77,7 +82,9 @@ class _CarroPageState extends State<CarroPage> {
       padding: EdgeInsets.all(16),
       child: ListView(
         children: <Widget>[
-          CachedNetworkImage(imageUrl: widget.carro.urlFoto),
+          CachedNetworkImage(
+              imageUrl: widget.carro.urlFoto ??
+                  "http://www.livroandroid.com.br/livro/carros/esportivos/BMW.png"),
           _bloco1(),
           Divider(),
           _bloco2(),
@@ -133,9 +140,15 @@ class _CarroPageState extends State<CarroPage> {
     switch (value) {
       case "Editar":
         print("Editar");
+        push(
+            context,
+            CarroFormPage(
+              carro: carro,
+            ));
         break;
 
       case "Deletar":
+        deletar();
         print("Deletar");
         break;
 
@@ -152,7 +165,6 @@ class _CarroPageState extends State<CarroPage> {
       color = favorito ? Colors.red : Colors.grey;
       icon = favorito ? Icons.favorite : Icons.favorite_border;
     });
-
   }
 
   void _onClickShare() {}
@@ -188,5 +200,17 @@ class _CarroPageState extends State<CarroPage> {
             }),
       ],
     );
+  }
+
+  void deletar() async {
+    ApiResponse<bool> response = await CarrosApi.delete(carro);
+
+    if (response.ok) {
+      alert(context, "Carro deletado com sucesso", callback: () {
+        pop(context);
+      });
+    } else {
+      alert(context, response.msg);
+    }
   }
 }
