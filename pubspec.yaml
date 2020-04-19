@@ -30,6 +30,7 @@ dependencies:
   connectivity: ^0.4.8+2
   image_picker: ^0.6.5
   provider: ^4.0.5
+  share: ^0.6.3+6
 
 dev_dependencies:
   flutter_test:
