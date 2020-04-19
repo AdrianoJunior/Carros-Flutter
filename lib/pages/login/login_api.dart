@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:carros/pages/api_response.dart';
 import 'package:carros/pages/login/usuario.dart';
-import 'package:carros/utils/alert.dart';
 import 'package:http/http.dart' as http;
 
 class LoginApi {
@@ -37,8 +36,7 @@ class LoginApi {
       }
 
       return ApiResponse.error(mapResponse["error"]);
-    } catch (error, exception) {
-
+    } catch (error) {
       return ApiResponse.error("Não foi possivel fazer o login.");
     }
   }

@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:carros/pages/api_response.dart';
 import 'package:carros/pages/carro/carro.dart';
 import 'package:carros/pages/login/usuario.dart';
-
 import 'package:http/http.dart' as http;
 
 import '../upload_api.dart';

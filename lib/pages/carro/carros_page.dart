@@ -1,15 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carros/pages/carro/carro_page.dart';
+import 'dart:async';
+
 import 'package:carros/pages/carro/carros_bloc.dart';
 import 'package:carros/pages/carro/carros_listview.dart';
-import 'package:carros/utils/nav.dart';
 import 'package:carros/widgets/text_error.dart';
 import 'package:flutter/material.dart';
 
 import 'carro.dart';
-import 'carros_api.dart';
-
-import 'dart:async';
 
 class CarrosPage extends StatefulWidget {
   String tipo;
