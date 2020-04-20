@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 
 import '../api_response.dart';
 import 'carro.dart';
+import 'mapa_page.dart';
 
 class CarroPage extends StatefulWidget {
   Carro carro;
@@ -53,7 +54,10 @@ class _CarroPageState extends State<CarroPage> {
       appBar: AppBar(
         title: Text(widget.carro.nome),
         actions: <Widget>[
-          IconButton(icon: Icon(Icons.place), onPressed: _onClickMapa),
+          IconButton(icon: Icon(Icons.place), onPressed: () {
+            _onClickMapa(context);
+          }
+          ),
           IconButton(
               icon: Icon(Icons.videocam),
               onPressed: () => _onClickVideo(context)),
@@ -136,7 +140,13 @@ class _CarroPageState extends State<CarroPage> {
     );
   }
 
-  void _onClickMapa() {}
+  void _onClickMapa(BuildContext context) {
+    if(carro.latitude != null && carro.longitude != null) {
+      push(context, MapaPage(carro));
+    } else {
+      alert(context, "Este carro não possui nenhuma latitude ou longitude cadastrada");
+    }
+  }
 
   void _onClickVideo(BuildContext context) {
     if (carro.urlVideo != null && carro.urlVideo.isNotEmpty) {
